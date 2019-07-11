@@ -1,0 +1,61 @@
+{% extends 'commerce/base.html' %}
+
+{% block title %}{{ category.name }}{% endblock title %}
+
+{% block body %}
+    <div class="container">
+            <br>
+            <h2>{{ category.name }}</h2>
+            <hr style="width: 1046px; margin-left: 0;">
+            <div class="table">
+                {% for product in products %}
+                    <div class="d-lg-table-row">
+                        <div class="col-sm-4 table-cel" style="background-color: white;">
+                                <img src="{{ product.image.url }}" style="width: 100%;" alt="">
+                            <a href="{% url 'product_details' slug=product.slug %}"><h4 class="text-center" style="color: black;">{{ product.name }}</h4></a>
+                            <p style="font-size: 20px; text-align: center;" >
+                                В наличии:
+                                {% if product.available %}
+                                    <b style="color: coral;">Есть</b>
+                                {% else %}
+                                    <b style="color: red;">Нету</b>
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% for i in x|rjust:10 %}
+                            &nbsp;
+                        {% endfor %}
+                        <div class="table-cel-1" style="background-color: white;">
+                            <p class="text-center"><b style="color: coral; font-size: 30px;">{{ product.price }} тг</b> &nbsp;
+                                <a href="" class='add_to_cart' data-slug="{{ product.slug }}"><button class="btn" style="background-color: #666666; color: #e7e7e7; margin-bottom: 10px;">Добавить в корзину</button></a></p>
+                            <h5>{{ product.params }}</h5>
+                        </div>
+                    {% for i in x|rjust:60 %}
+                            &nbsp;
+                        {% endfor %}
+                    </div>
+                    <hr style="width: 1046px; margin-left: 0;">
+                {% endfor %}
+            </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.add_to_cart').on('click', function (e) {
+                e.preventDefault();
+                product_slug = $(this).attr('data-slug');
+                data = {
+                    product_slug: product_slug
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url 'add_to_cart' %}',
+                    data: data,
+                    success: function (data) {
+                        $('#cart_count').html(data.cart_total)
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock body %}

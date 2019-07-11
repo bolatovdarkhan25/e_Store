@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Base{% endblock title %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+</head>
+<body style="background-color: darkgray;">
+<style>
+    .table-row {
+      display: table-row;
+    }
+    .table-cel {
+        display: table-cell;
+        padding: 30px;
+        margin-left: 100px;
+    }
+    .table-cel-1 {
+        display: table-cell;
+        padding: 100px;
+    }
+    .dropdown-btn-js {
+        color: #3cb0fb;
+        font-size: 18px;
+        margin-left: 15px;
+    }
+    .dropdown-btn-js:hover {
+        text-decoration: none;
+    }
+    .dropdown-js {
+        width: 10%;
+        padding-top: 18px;
+        padding-left: 2px;
+        height: 66px;
+        margin-top: -8px;
+        margin-bottom: -8px;
+        background-color: #303030;
+        color: white;
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-menu-js{
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        margin-top: 10px;
+    }
+    .dropdown-menu-js a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .dropdown-menu-js a:hover {background-color: #ddd;}
+    .dropdown-js:hover .dropdown-menu-js {display: block;}
+</style>
+
+<header>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="dropdown-js">
+            <a class="dropdown-btn-js" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Categories &#9660;
+            </a>
+            <div class="dropdown-menu-js" aria-labelledby="navbarDropdownMenuLink" style="background-color: slategrey;">
+                {% for category in categories %}
+                    <a class="dropdown-item" href="{% url 'category_view' slug=category.slug %}">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <form class="form-inline" style="margin-right:300px;" action="{% url 'search' %}">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" style="width: 700px;" name='q'>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    <a href="{% url 'cart_view' %}" style="text-decoration: none;">
+        <img src="{{ icon.url }}" style="margin-right: 10px;" alt="">
+        <div class="badge" id="cart_count" style="width: 30px; height: 30px; border: 2px solid darkgrey; border-radius: 50%; background-color: darkgrey;
+            font-size: 15px; color: black;" >
+            {{ cart.items.count }}
+        </div>
+    </a>
+    </nav>
+</header>
+<script src="/static/jquery-3.4.1.min.js"></script>
+<script>
+
+</script>
+{% block body %}
+{% endblock body %}
+</body>
+</html>

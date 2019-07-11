@@ -1,0 +1,110 @@
+{% extends 'commerce/base.html' %}
+{% load static %}
+{% block title %} Cart {% endblock title %}
+
+{% block body %}
+    <div class="container">
+    <br>
+    <h1 style="text-align: center;">Ваша корзина</h1>
+        <table class="table">
+            <tr>
+                <td class="text-center"><b>Товар</b></td>
+                <td class="text-center"><b>Количество</b></td>
+                <td class="text-center"><b>Цена</b></td>
+            </tr>
+            {% for item in items %}
+                <tr class="cart-item-{{ item.product.id }}">
+                    <td class="text-center">{{ item.product.name }}</td>
+                    <td class="text-center">
+                        <form action="" method="get">
+                            <input type="number" name='amount' value="{{ item.amount }}" min="1" max="10" class="cart-item-amount" data-id="{{ item.id }}">шт
+                        </form>
+                    </td>
+                    <td class="text-center" id="cart-item-total-{{ item.id }}">{{ item.item_total_price }}тг</td>
+                    <td class="text-center"><a href="" class="remove-from-cart" data-slug="{{ item.product.slug }}" data-id="{{ item.product.id }}"><button class="btn btn-danger">Удалить из корзины</button></a></td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td class="text-center"><b>Итого:</b></td>
+                {% if cart.cart_total_amount < 5 and cart.cart_total_amount > 1 %}
+                    <td class="text-center" id="cart-total-amount"><b>{{ cart.cart_total_amount }} товара</b></td>
+                {% elif cart.cart_total_amount >= 5 %}
+                    <td class="text-center" id="cart-total-amount"><b>{{ cart.cart_total_amount }} товаров</b></td>
+                {% else %}
+                    <td class="text-center" id="cart-total-amount"><b>{{ cart.cart_total_amount }} товар</b></td>
+                {% endif %}
+                <td class="text-center" id="cart-total-price"><b>{{ cart.cart_total_price }}тг</b></td>
+            </tr>
+        </table>
+        <br>
+        <a href="" style="margin-left: 900px;"><button class="btn" style="background-color: #ca771c;">
+            Предварительный заказ
+        </button></a>
+    </div>
+        <h2 class='text-center' id="empty-cart"><strong></strong></h2>
+<script src="/static/jquery-3.4.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.remove-from-cart').on('click', function(e) {
+                e.preventDefault();
+                product_slug = $(this).attr('data-slug');
+                item_product_id = $(this).attr('data-id');
+                data = {
+                    product_slug: product_slug,
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url 'remove_from_cart' %}',
+                    data: data,
+                    success: function(data){
+                        $('#cart_count').html(data.cart_total);
+                        $('.cart-item-'+item_product_id).remove();
+                        $('#cart-total-price').html('<b>' + parseFloat(data.cart_total_price).toFixed(2) + 'тг' + '</b>')
+                        $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + '</b>')
+                        if(data.total_amount === 0){
+                            $('#cart-table').css('display', 'none');
+                            $('#empty-cart').html('<h2 class=\'text-center\'><strong>Ваша корзина пуста :с</strong></h2>')
+                        }
+                        else if (data.total_amount < 5 && data.total_amount > 1) {
+                            $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + ' товара' + '</b>');
+                        }
+                        else if (data.total_amount >= 5){
+                            $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + ' товаров' + '</b>');
+                        }
+                        else{
+                            $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + ' товар' + '</b>');
+                        }
+                    }
+                })
+            })
+        });
+        $(document).ready(function(){
+            $('.cart-item-amount').on('click', function(){
+                amount = $(this).val();
+                item_id = $(this).attr('data-id');
+                data = {
+                    amount: amount,
+                    item_id: item_id
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url 'change_item_amount' %}',
+                    data: data,
+                    success: function(data){
+                        $('#cart-item-total-'+item_id).html(parseFloat(data.item_total).toFixed(2) + 'тг');
+                        $('#cart-total-price').html('<b>' + parseFloat(data.cart_total_price).toFixed(2) + 'тг' + '</b>');
+                        if (data.total_amount < 5 && data.total_amount > 1) {
+                            $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + ' товара' + '</b>');
+                        }
+                        else if (data.total_amount >= 5){
+                            $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + ' товаров' + '</b>');
+                        }
+                        else{
+                            $('#cart-total-amount').html('<b>' + parseInt(data.total_amount) + ' товар' + '</b>');
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock body %}
