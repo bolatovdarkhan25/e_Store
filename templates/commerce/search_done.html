@@ -37,7 +37,7 @@
                         {% endfor %}
                         <div class="table-cel-1" style="background-color: white;">
                             <p class="text-center"><b style="color: coral; font-size: 30px;">{{ product.price }} тг</b> &nbsp;
-                                <a href="" class='add_to_cart' data-slug="{{ product.slug }}"><button class="btn" style="background-color: #666666; color: #e7e7e7; margin-bottom: 10px;">Добавить в корзину</button></a></p>
+                                <a href="" class='add_to_cart' data-slug="{{ product.slug }}" data-name="{{ product.name }}"><button class="btn" style="background-color: #666666; color: #e7e7e7; margin-bottom: 10px;">Добавить в корзину</button></a></p>
                             <h5>{{ product.params }}</h5>
                         </div>
                     {% for i in x|rjust:60 %}
@@ -54,17 +54,21 @@
             $('.add_to_cart').on('click', function (e) {
                 e.preventDefault();
                 product_slug = $(this).attr('data-slug');
+                product_name = $(this).attr('data-name');
                 data = {
-                    product_slug: product_slug
+                    product_slug: product_slug,
+                    product_name: product_name
                 };
                 $.ajax({
                     type: "GET",
                     url: '{% url 'add_to_cart' %}',
                     data: data,
                     success: function (data) {
-                        $('#cart_count').html(data.cart_total)
+                        $('#cart_count').html(data.cart_total);
+                        alert('Товар ' + product_name + ' добавлен в вашу корзину!')
                     }
-                })
+                });
+
             })
         })
     </script>

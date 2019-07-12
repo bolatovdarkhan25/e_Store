@@ -1,0 +1,44 @@
+{% extends 'commerce/base.html' %}
+{% block title %}
+    Профиль
+{% endblock title %}
+
+{% block body %}
+    <div class="container">
+    <br>
+        <h2 style="color: darkslategray;"><strong>Ваш профиль</strong></h2>
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+                <td><p style="color: black;">Логин:</p></td>
+                <td><p style="color: black">{{ user.username }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Имя:</p></td>
+                <td><p style="color: black">{{ user.first_name }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Фамилия:</p></td>
+                <td><p style="color: black">{{ user.last_name }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Отчество:</p></td>
+                <td><p style="color: black">{{ user.userprofile.patronymic }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">э-почта:</p></td>
+                <td><p style="color: black">{{ user.email }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Город:</p></td>
+                <td><p style="color: black">{{ user.userprofile.city }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Номер телефоны:</p></td>
+                <td><p style="color: black">{{ user.userprofile.phone }}</p></td>
+            </tr>
+          </tbody>
+        </table>
+        <a href="{% url 'profile_edit' %}"><button class="btn btn-primary">Редактировать профиль</button></a>
+    </div>
+{% endblock body %}

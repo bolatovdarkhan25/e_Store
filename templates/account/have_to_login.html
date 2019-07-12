@@ -1,0 +1,11 @@
+{% extends 'commerce/base.html' %}
+
+{% block title %} Вы должны войти в систему чтобы купить товар {% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <br>
+        <h2>Вы должны войти в систему чтобы купить товар</h2>
+        <a href="{% url 'login' %}"><button class="btn btn-primary">Вход</button></a>
+    </div>
+{% endblock body %}

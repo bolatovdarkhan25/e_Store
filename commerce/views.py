@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from . import models
 from decimal import Decimal
 from django.http import JsonResponse
+from django.contrib.auth.models import User
 # Create your views here.
 
 
@@ -48,7 +49,8 @@ def set_cart(cart):
 def base(request):
     icon = get_cart_icon().image
     categories = get_all_categories()
-    return render(request, 'commerce/base.html', {'categories': categories, 'icon': icon, 'cart': get_cart(request)})
+    return render(request, 'commerce/base.html', {'categories': categories, 'icon': icon, 'cart': get_cart(request),
+                                                  'user': request.user})
 
 
 def homepage(request):
@@ -56,13 +58,22 @@ def homepage(request):
     categories = get_all_categories()
     icon = get_cart_icon().image
     products_for_carousel = models.Product.objects.filter(to_carousel=True)
-    args = {
+    if request.user not in User.objects.all():
+        args = {
+                'products': products,
+                'products_for_carousel': products_for_carousel,
+                'categories': categories,
+                'user': request.user,
+                }
+    else:
+        args = {
             'products': products,
             'products_for_carousel': products_for_carousel,
             'categories': categories,
             'icon': icon,
             'cart': get_cart(request),
-            }
+            'user': request.user,
+        }
     return render(request, 'commerce/home.html', args)
 
 
@@ -71,25 +82,34 @@ def category_view(request, slug):
     category = models.Category.objects.get(slug=slug)
     products = models.Product.objects.filter(category=category).order_by('pk')
     categories = get_all_categories()
-    args = {
+    if request.user not in User.objects.all():
+        args = {
+                'products': products,
+                'categories': categories,
+                'category': category,
+                'user': request.user,
+                }
+    else:
+        args = {
             'products': products,
             'categories': categories,
             'category': category,
             'icon': icon,
             'cart': get_cart(request),
-            }
+            'user': request.user,
+        }
     return render(request, 'commerce/category_view.html', args)
 
 
 def cart_view(request):
     icon = get_cart_icon().image
     categories = get_all_categories()
-    cart = get_cart(request)
     args = {
-        'items': cart.items.all(),
+        'items': get_cart(request).items.all(),
         'categories': categories,
         'icon': icon,
-        'cart': cart,
+        'cart': get_cart(request),
+        'user': request.user,
     }
     return render(request, 'commerce/cart_view.html', args)
 
@@ -107,23 +127,44 @@ def search(request):
                 k += 1
                 products.append(i)
         if k != 0:
-            args = {
-                'products': products,
-                'name': query,
-                'categories': categories,
-                'icon': icon,
-                'query': query,
-                'count': len(products),
-                'cart': get_cart(request),
-            }
+            if request.user not in User.objects.all():
+                args = {
+                    'products': products,
+                    'name': query,
+                    'categories': categories,
+                    'query': query,
+                    'count': len(products),
+                    'user': request.user,
+                }
+            else:
+                args = {
+                    'products': products,
+                    'name': query,
+                    'categories': categories,
+                    'icon': icon,
+                    'query': query,
+                    'count': len(products),
+                    'cart': get_cart(request),
+                    'user': request.user,
+                }
         else:
-            args = {
-                'products': '',
-                'name': query,
-                'categories': categories,
-                'icon': icon,
-                'cart': get_cart(request),
-            }
+            if request.user not in User.objects.all():
+                args = {
+                    'products': '',
+                    'name': query,
+                    'categories': categories,
+                    'user': request.user,
+                }
+            else:
+                args = {
+                    'products': '',
+                    'name': query,
+                    'categories': categories,
+                    'icon': icon,
+                    'cart': get_cart(request),
+                    'user': request.user,
+                }
+
     return render(request, 'commerce/search_done.html', args)
 
 
@@ -136,6 +177,7 @@ def add_to_cart(request):
         'cart_total_price': cart.cart_total_price,
         'total_amount': cart.cart_total_amount,
     })
+
 
 
 def remove_from_cart(request):
@@ -151,12 +193,20 @@ def remove_from_cart(request):
 
 def product_details(request, slug):
     product = models.Product.objects.get(slug=slug)
-    args = {
-        'product': product,
-        'categories': get_all_categories(),
-        'icon': get_cart_icon().image,
-        'cart': get_cart(request),
-    }
+    if request.user not in User.objects.all():
+        args = {
+            'product': product,
+            'categories': get_all_categories(),
+            'user': request.user,
+        }
+    else:
+        args = {
+            'product': product,
+            'categories': get_all_categories(),
+            'icon': get_cart_icon().image,
+            'cart': get_cart(request),
+            'user': request.user,
+        }
     return render(request, 'commerce/product_details.html', args)
 
 

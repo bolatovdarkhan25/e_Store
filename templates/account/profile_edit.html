@@ -1,0 +1,18 @@
+{% extends 'commerce/base.html' %}
+
+{% block title %}
+    Профиль
+{% endblock title %}
+
+{% block body %}
+    <div class = "container">
+        <br>
+        <h2>Редактирование</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ form1.as_p }}
+            <button type="submit" class = "btn btn-primary">Подтвердить</button>
+        </form>
+    </div>
+{% endblock %}

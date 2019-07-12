@@ -27,7 +27,11 @@
                         {% endfor %}
                         <div class="table-cel-1" style="background-color: white;">
                             <p class="text-center"><b style="color: coral; font-size: 30px;">{{ product.price }} тг</b> &nbsp;
-                                <a href="" class='add_to_cart' data-slug="{{ product.slug }}"><button class="btn" style="background-color: #666666; color: #e7e7e7; margin-bottom: 10px;">Добавить в корзину</button></a></p>
+                                {% if user.is_authenticated %}
+                                    <a href="" class='add_to_cart' data-slug="{{ product.slug }}"><button class="btn" style="background-color: #666666; color: #e7e7e7; margin-bottom: 10px;">Добавить в корзину</button></a></p>
+                                {% else %}
+                                    <a href="{% url 'have_to_login' %}"><button class="btn" style="background-color: #666666; color: #e7e7e7; margin-bottom: 10px;">Добавить в корзину</button></a></p>
+                                {% endif %}
                             <h5>{{ product.params }}</h5>
                         </div>
                     {% for i in x|rjust:60 %}

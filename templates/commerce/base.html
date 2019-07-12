@@ -10,10 +10,9 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 </head>
-<body style="background-color: darkgray;">
 <style>
     .table-row {
-      display: table-row;
+        display: table-row;
     }
     .table-cel {
         display: table-cell;
@@ -24,61 +23,142 @@
         display: table-cell;
         padding: 100px;
     }
-    .dropdown-btn-js {
-        color: #3cb0fb;
-        font-size: 18px;
-        margin-left: 15px;
-    }
-    .dropdown-btn-js:hover {
-        text-decoration: none;
-    }
-    .dropdown-js {
-        width: 10%;
-        padding-top: 18px;
-        padding-left: 2px;
+
+    #header{
+        background-color: #333234;
+        text-align: center;
         height: 66px;
-        margin-top: -8px;
         margin-bottom: -8px;
-        background-color: #303030;
-        color: white;
-        position: relative;
-        display: inline-block;
+        margin-top: -8px;
+        padding-top: 11px;
+        padding-left: 3px;
+        width: 10%;
     }
-    .dropdown-menu-js{
-        display: none;
-        position: absolute;
-        background-color: #f1f1f1;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        margin-top: 10px;
-    }
-    .dropdown-menu-js a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
+    #top_menu{
         display: block;
+        padding-left: 0;
+        margin: 0;
+}
+    #top_menu > li{
+        display: block;
+        position: absolute;
     }
-    .dropdown-menu-js a:hover {background-color: #ddd;}
-    .dropdown-js:hover .dropdown-menu-js {display: block;}
+    #top_menu > li > a{
+        display: block;
+        padding: 10px 20px;
+        color: #3cb0fb;
+        text-decoration: none;
+        transition: background-color 0.25s, color 0.15s;
+    }
+    #top_menu > li > a:hover{
+        color: #3841d0;
+    }
+    #top_menu > li:hover > ul a{
+        opacity: 1;
+    }
+    #top_menu > li:hover > ul li{
+        height: 50px;
+        opacity: 1;
+    }
+    .inner_menu{
+        list-style: none;
+        padding-left: 0;
+        background-color: slategrey;
+        margin-top: 11px;
+        width: 141px;
+        margin-left: -3px;
+    }
+    .inner_menu > li{
+        height: 0;
+        transition: height 0.5s, opacity 0.9s;
+    }
+    .inner_menu > li > a{
+        padding: 10px 20px;
+        text-decoration: none;
+        height: inherit;
+        opacity: 0;
+    }
+    #top_menu > li:hover > .inner_menu > li > a {
+        transition: height 0.5s, opacity 1.5s;
+    }
+    .inner_menu > li > a:hover{
+        color: black;
+        background-color: #ddd;
+    }
+    .buttons {
+        text-align: center;
+        height: 66px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+        padding-top: 10px;
+        width: 10%;
+    }
+    .button_div {
+        font-size: 18px;
+        color: #3cb0fb;
+    }
+    .buttons:hover > .button_div {
+        color: #3841d0;
+    }
+    .btnt:hover > .button_div {
+        color: #3841d0;
+    }
+
 </style>
+<body style="background-color: darkgray;">
 
 <header>
     <nav class="navbar navbar-dark bg-dark">
-        <div class="dropdown-js">
-            <a class="dropdown-btn-js" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Categories &#9660;
-            </a>
-            <div class="dropdown-menu-js" aria-labelledby="navbarDropdownMenuLink" style="background-color: slategrey;">
-                {% for category in categories %}
-                    <a class="dropdown-item" href="{% url 'category_view' slug=category.slug %}">{{ category.name }}</a>
-                {% endfor %}
-            </div>
+        <div id="header">
+            <ul id="top_menu">
+                <li>
+                    <a href="#">
+                        Категории &#9660;
+                    </a>
+                    <ul class="inner_menu">
+                    {% for category in categories %}
+                        <li><a class="dropdown-item" href="{% url 'category_view' slug=category.slug %}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                </li>
+            </ul>
         </div>
-        <form class="form-inline" style="margin-right:300px;" action="{% url 'search' %}">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" style="width: 700px;" name='q'>
+        <form class="form-inline"  action="{% url 'search' %}">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" style="width: 500px;" name='q'>
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
+        <a class="btnt" href="{% url 'homepage' %}" style="text-align: center;
+        height: 66px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+        width: 10%;">
+            <button class="btn button_div">
+                Домашняя страница
+            </button>
+        </a>
+    {% if user.is_authenticated %}
+        <a class="buttons" href="{% url 'profile_view' %}" style="margin-right: -5px;">
+            <button class="btn button_div">
+                Профиль
+            </button>
+        </a>
+        <a class="buttons" href="{% url 'logout' %}" style="margin-right: 40px;">
+            <button class="btn button_div">
+                Выход
+            </button>
+        </a>
+    {% else %}
+        <a class="buttons" href="{% url 'login' %}">
+            <button class="btn button_div">
+                Вход
+            </button>
+        </a>
+        <a class="buttons" href="{% url 'register' %}">
+            <button class="btn button_div">
+                Регистрация
+            </button>
+        </a>
+    {% endif %}
     <a href="{% url 'cart_view' %}" style="text-decoration: none;">
         <img src="{{ icon.url }}" style="margin-right: 10px;" alt="">
         <div class="badge" id="cart_count" style="width: 30px; height: 30px; border: 2px solid darkgrey; border-radius: 50%; background-color: darkgrey;

@@ -110,5 +110,3 @@ class Cart_Icon(models.Model):
 
     def __str__(self):
         return self.name
-
-
