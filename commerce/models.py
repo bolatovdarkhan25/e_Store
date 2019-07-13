@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from transliterate import translit
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
 
@@ -110,3 +111,24 @@ class Cart_Icon(models.Model):
 
     def __str__(self):
         return self.name
+
+
+ORDER_STATUS_CHOICES = (
+    ('Принят в обработку', 'Принят в обработку'),
+    ('Выполняется', 'Выполняется'),
+    ('Оплачен', 'Оплачен'),
+)
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = ArrayField(models.CharField(max_length=255, default=''), default=list)
+    address = models.CharField(max_length=255, default='', verbose_name='Адресс доставки*')
+    buying_type = models.CharField(max_length=50, choices=(('Самовывоз', 'Самовывоз'), ('Доставка', 'Доставка')),
+                                   default=('Самовывоз', 'Самовывоз'), verbose_name='Способ доставки*')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата получения*')
+    comments = models.TextField(blank=True, verbose_name='Комментарии')
+    status = models.CharField(max_length=255, choices=ORDER_STATUS_CHOICES, verbose_name='Статус заказа')
+
+    def __str__(self):
+        return "Заказ номер {}".format(str(self.id))

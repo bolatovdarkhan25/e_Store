@@ -1,0 +1,18 @@
+{% extends 'commerce/base.html' %}
+
+{% block title %} Заказ {% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <br>
+        <h2>Оформление заказа</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ order_form.as_p }}
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+            <button class="bnt btn-primary" type="submit">Подтвердить оформление</button>
+        </form>
+    <br>
+    </div>
+{% endblock body %}

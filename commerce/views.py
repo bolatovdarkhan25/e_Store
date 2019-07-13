@@ -3,6 +3,9 @@ from . import models
 from decimal import Decimal
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from . import forms
+from account import forms as account_forms
+from account import models as account_models
 # Create your views here.
 
 
@@ -223,3 +226,39 @@ def change_item_amount(request):
                          'item_total': item.item_total_price,
                          'cart_total_price': cart.cart_total_price,
                          'total_amount': cart.cart_total_amount})
+
+
+def order(request):
+    profile = account_models.UserProfile.objects.get_or_create(user=request.user)
+    profile = account_models.UserProfile.objects.get(user=request.user)
+    cart = get_cart(request)
+    if request.method == "POST":
+        order_form = forms.OrderForm(request.POST)
+        user_form = account_forms.UserEdit(request.POST, instance=request.user)
+        profile_form = account_forms.ProfileEdit(request.POST, instance=profile)
+
+        if order_form.is_valid() and user_form.is_valid() and profile_form.is_valid():
+            new_order = models.Order()
+            new_order.buying_type = order_form.cleaned_data['buying_type']
+            new_order.date = order_form.cleaned_data['date']
+            new_order.address = order_form.cleaned_data['address']
+            new_order.comments = order_form.cleaned_data['comments']
+            new_order.user = request.user
+            for i in range(len(cart.items.all())):
+                if i == 0:
+                    new_order.items.append(cart.items.all()[i].product.name)
+                else:
+                    new_order.items.append('   ' + cart.items.all()[i].product.name)
+            new_order.save()
+            user_form.save()
+            profile_form.save()
+            return redirect('/')
+        else:
+            return redirect('/')
+    else:
+        order_form = forms.OrderForm()
+        user_form = account_forms.UserEdit(instance=request.user)
+        profile_form = account_forms.ProfileEdit(instance=profile)
+
+    args = {'order_form': order_form, 'user_form': user_form, 'profile_form': profile_form}
+    return render(request, 'commerce/order.html', args)
