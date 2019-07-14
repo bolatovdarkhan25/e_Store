@@ -8,7 +8,7 @@ from commerce import views as commerce_views
 def register(request):
     cart = commerce_views.get_cart(request)
     categories = commerce_views.get_all_categories()
-    icon = commerce_views.get_cart_icon().image
+    icon = commerce_views.get_cart_icon()
     if request.method == 'POST':
         form = forms.RegistrationForm(request.POST)
 
@@ -26,7 +26,7 @@ def register(request):
 def profile_view(request):
     cart = commerce_views.get_cart(request)
     categories = commerce_views.get_all_categories()
-    icon = commerce_views.get_cart_icon().image
+    icon = commerce_views.get_cart_icon()
     args = {'user': request.user, 'categories': categories, 'icon': icon, 'cart': cart}
     return render(request, 'account/profile_view.html', args)
 
@@ -34,7 +34,7 @@ def profile_view(request):
 def have_to_login(request):
     cart = commerce_views.get_cart(request)
     categories = commerce_views.get_all_categories()
-    icon = commerce_views.get_cart_icon().image
+    icon = commerce_views.get_cart_icon()
     args = {'categories': categories, 'icon': icon, 'cart': cart}
     return render(request, 'account/have_to_login.html', args)
 
@@ -42,7 +42,7 @@ def have_to_login(request):
 def profile_edit(request):
     cart = commerce_views.get_cart(request)
     categories = commerce_views.get_all_categories()
-    icon = commerce_views.get_cart_icon().image
+    icon = commerce_views.get_cart_icon()
     profile = models.UserProfile.objects.get_or_create(user=request.user)
     profile = models.UserProfile.objects.get(user=request.user)
     if request.method == 'POST':

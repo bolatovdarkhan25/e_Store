@@ -12,4 +12,6 @@ urlpatterns = [
     path('cart/change_item_amount/', commerce_views.change_item_amount, name='change_item_amount'),
     path('product/<slug>/', commerce_views.product_details, name='product_details'),
     path('order/formalization/', commerce_views.order, name='order'),
+    path('orders/', commerce_views.show_my_orders, name='orders_list'),
+    path('order/<pk>/view/', commerce_views.show_particular_order, name='show_order')
 ]

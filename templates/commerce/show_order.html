@@ -1,0 +1,61 @@
+{% extends 'commerce/base.html' %}
+{% block title %} Order №{{ order.pk }}{% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <br>
+        <h2>Заказ №{{ order.pk }}</h2>
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+                <td><p style="color: black;">Заказщик:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ user.username }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">ФИО получителя:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.user.last_name }}, {{ order.user.first_name }}, {{ order.user.userprofile.patronymic }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">э-почта получателя:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.user.email }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Номер телефона:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.user.userprofile.phone }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Товары:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.items }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Способ получения:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.buying_type }}</p></td>
+            </tr>
+            {% if order.buying_type == 'Доставка' %}
+            <tr>
+                <td><p style="color: black;">Адресс доставки:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.user.userprofile.city }}, {{ order.address }}</p></td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><p style="color: black;">Дата получения:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.date }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Итоговая цена:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.total_price }}тг</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Статус заказа:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.status }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="color: black;">Комментарии:</p></td>
+                <td><p style="color: black; margin-left: 300px;">{{ order.comments }}</p></td>
+            </tr>
+          </tbody>
+        </table>
+    <a href="{% url 'homepage' %}" style="margin-left: 1032px;"><button class="btn btn-dark">Домой</button></a>
+    </div>
+    <br>
+{% endblock body %}

@@ -1,0 +1,14 @@
+{% extends 'commerce/base.html' %}
+{% block title %} Orders {% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <br>
+        <h2>Ваши заказы:</h2>
+        {% for order in orders %}
+            <b><a href="{% url 'show_order' pk=order.pk %}" style="color: black; font-size: 18px;">Заказ №{{ order.pk }}</a></b><p style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">({{ order.items }})</p>
+            <hr>
+        {% endfor %}
+
+    </div>
+{% endblock body %}

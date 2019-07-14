@@ -34,11 +34,12 @@
                 <td><p style="color: black">{{ user.userprofile.city }}</p></td>
             </tr>
             <tr>
-                <td><p style="color: black;">Номер телефоны:</p></td>
+                <td><p style="color: black;">Номер телефона:</p></td>
                 <td><p style="color: black">{{ user.userprofile.phone }}</p></td>
             </tr>
           </tbody>
         </table>
         <a href="{% url 'profile_edit' %}"><button class="btn btn-primary">Редактировать профиль</button></a>
+        <a href="{% url 'orders_list' %}"><button class="btn btn-dark" style="margin-left: 779px;">Мои заказы</button></a>
     </div>
 {% endblock body %}

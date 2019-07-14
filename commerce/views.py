@@ -11,7 +11,7 @@ from account import models as account_models
 
 # #     for cart icon
 def get_cart_icon():
-    return models.Cart_Icon.objects.get(pk=1)
+    return models.Cart_Icon.objects.get(pk=1).image
 
 
 # #     for dropdown
@@ -50,7 +50,7 @@ def set_cart(cart):
 
 
 def base(request):
-    icon = get_cart_icon().image
+    icon = get_cart_icon()
     categories = get_all_categories()
     return render(request, 'commerce/base.html', {'categories': categories, 'icon': icon, 'cart': get_cart(request),
                                                   'user': request.user})
@@ -59,7 +59,7 @@ def base(request):
 def homepage(request):
     products = get_all_products()
     categories = get_all_categories()
-    icon = get_cart_icon().image
+    icon = get_cart_icon()
     products_for_carousel = models.Product.objects.filter(to_carousel=True)
     if request.user not in User.objects.all():
         args = {
@@ -81,7 +81,7 @@ def homepage(request):
 
 
 def category_view(request, slug):
-    icon = get_cart_icon().image
+    icon = get_cart_icon()
     category = models.Category.objects.get(slug=slug)
     products = models.Product.objects.filter(category=category).order_by('pk')
     categories = get_all_categories()
@@ -105,7 +105,7 @@ def category_view(request, slug):
 
 
 def cart_view(request):
-    icon = get_cart_icon().image
+    icon = get_cart_icon()
     categories = get_all_categories()
     args = {
         'items': get_cart(request).items.all(),
@@ -118,7 +118,7 @@ def cart_view(request):
 
 
 def search(request):
-    icon = get_cart_icon().image
+    icon = get_cart_icon()
     categories = get_all_categories()
     products = []
     args = {}
@@ -206,7 +206,7 @@ def product_details(request, slug):
         args = {
             'product': product,
             'categories': get_all_categories(),
-            'icon': get_cart_icon().image,
+            'icon': get_cart_icon(),
             'cart': get_cart(request),
             'user': request.user,
         }
@@ -239,16 +239,21 @@ def order(request):
 
         if order_form.is_valid() and user_form.is_valid() and profile_form.is_valid():
             new_order = models.Order()
+            new_order.user = request.user
+            for i in range(len(cart.items.all())):
+                if i == 0:
+                    new_order.items.append('1) ' + cart.items.all()[i].product.name +
+                                           '({} * {})'.format(cart.items.all()[i].amount,
+                                                              cart.items.all()[i].product.price))
+                else:
+                    new_order.items.append('   {}) '.format(i + 1) + cart.items.all()[i].product.name +
+                                           '({} * {})'.format(cart.items.all()[i].amount,
+                                                         cart.items.all()[i].product.price))
+            new_order.total_price = cart.cart_total_price
             new_order.buying_type = order_form.cleaned_data['buying_type']
             new_order.date = order_form.cleaned_data['date']
             new_order.address = order_form.cleaned_data['address']
             new_order.comments = order_form.cleaned_data['comments']
-            new_order.user = request.user
-            for i in range(len(cart.items.all())):
-                if i == 0:
-                    new_order.items.append(cart.items.all()[i].product.name)
-                else:
-                    new_order.items.append('   ' + cart.items.all()[i].product.name)
             new_order.save()
             user_form.save()
             profile_form.save()
@@ -260,5 +265,18 @@ def order(request):
         user_form = account_forms.UserEdit(instance=request.user)
         profile_form = account_forms.ProfileEdit(instance=profile)
 
-    args = {'order_form': order_form, 'user_form': user_form, 'profile_form': profile_form}
+    args = {'order_form': order_form, 'user_form': user_form, 'profile_form': profile_form,
+            'cart': get_cart(request), 'categories': get_all_categories(), 'icon': get_cart_icon()}
     return render(request, 'commerce/order.html', args)
+
+
+def show_my_orders(request):
+    orders = models.Order.objects.filter(user=request.user)
+    args = {'orders': orders, 'cart': get_cart(request), 'categories': get_all_categories(), 'icon': get_cart_icon()}
+    return render(request, 'commerce/orders_list.html', args)
+
+
+def show_particular_order(request, pk):
+    order = models.Order.objects.get(pk=pk)
+    args = {'order': order, 'cart': get_cart(request), 'categories': get_all_categories(), 'icon': get_cart_icon()}
+    return render(request, 'commerce/show_order.html', args)
